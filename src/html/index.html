@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!-- index.html (Versione COMPLETA e AGGIORNATA) -->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PromptHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="app-header">
+        <!-- *** MODIFICATO: Raggruppiamo logo e titolo *** -->
+        <div class="header-title-group">
+            <div class="app-logo">{_}</div>
+            <h1>PromptHub</h1>
+        </div>
+    </header>
+
+    <nav class="navigation-bar">
+        <!-- Il resto della navigazione rimane invariato -->
+        <button id="back-btn" class="nav-btn" disabled>←</button>
+        <div id="breadcrumbs" class="breadcrumbs-container"></div>
+        <div class="zoom-controls">
+            <button id="zoom-out-btn" class="nav-btn" title="Riduci">-</button>
+            <button id="zoom-reset-btn" class="nav-btn" title="Zoom 100%">⛶</button>
+            <button id="zoom-in-btn" class="nav-btn" title="Ingrandisci">+</button>
+        </div>
+        <div class="global-actions">
+            <button id="new-folder-btn" class="nav-btn" title="Nuova Cartella">📁+</button>
+            <button id="new-prompt-btn" class="nav-btn" title="Nuovo Prompt">📄+</button>
+        </div>
+    </nav>
+    
+    <main id="desktop">
+        <!-- Le icone dei prompt verranno inserite qui -->
+    </main>
+    
+    <button id="credits-btn" class="credits-btn">?</button>
+
+    <div id="credits-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>PromptHub {_}</h2>
+            <p>A Prompts AI's Manager.</p>
+            <p><strong>Licenza:</strong> MIT License</p>
+            <p>Build with 💚 by - ❖ Alchemy Labs -</p>
+            <br>
+            <button class="close-modal-btn">Chiudi</button>
+        </div>
+    </div>
+
+    <div id="action-menu-container" class="action-menu-container"></div>
+    <div id="color-picker-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Scegli un colore</h2>
+            <div id="color-grid" class="color-grid"></div>
+            <button class="close-modal-btn">Chiudi</button>
+        </div>
+    </div>
+    <div id="editor-modal" class="modal-overlay editor-overlay">
+        <div class="editor-container">
+            <div class="editor-header">
+                <input type="text" id="editor-filename" class="editor-filename-input" />
+                <div class="editor-actions">
+                    <button id="editor-copy-btn" class="editor-btn" title="Copia tutto">📋</button>
+                    <button id="editor-close-btn" class="editor-btn" title="Chiudi Editor">✖</button>
+                </div>
+            </div>
+            <textarea id="editor-textarea" class="editor-textarea"></textarea>
+        </div>
+    </div>
+
+    <script src="../../node_modules/sortablejs/Sortable.min.js"></script>
+    <script src="../js/renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "name": "prompthub",
+  "version": "1.0.0",
+  "description": "Prompts AI's Manager.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "keywords": [
+    "prompt",
+    "ai",
+    "desktop",
+    "manager"
+  ],
+  "author": "- ❖ Alchemy Labs -",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "sortablejs": "^1.15.2"
+  },
+  "build": {
+    "appId": "com.prompthub.app",
+    "productName": "PromptHub",
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    }
+  }
+}

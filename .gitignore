@@ -1,0 +1,12 @@
+# Dipendenze
+/node_modules
+
+# File di output della build
+/dist
+
+# Cache e log di sistema e di build
+/node_modules/.cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
