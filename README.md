@@ -2,6 +2,8 @@
 
 Un Desktop Manager per i tuoi Prompt AI. Organizza, modifica e gestisci i tuoi prompt con un'interfaccia drag-and-drop ispirata al desktop.
 
+![Screenshot di PromptHub]([https://private-user-images.githubusercontent.com/61665547/465461290-194eb41d-ab51-484c-8046-217962c35188.png](https://private-user-images.githubusercontent.com/61665547/465461290-194eb41d-ab51-484c-8046-217962c35188.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTIyNjY5MDYsIm5iZiI6MTc1MjI2NjYwNiwicGF0aCI6Ii82MTY2NTU0Ny80NjU0NjEyOTAtMTk0ZWI0MWQtYWI1MS00ODRjLTgwNDYtMjE3OTYyYzM1MTg4LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA3MTElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNzExVDIwNDMyNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWFmYjI3NWI0YTBjNTU2ODZkYzI5MTJhNjRkZWQ4NTBmYzE3MzY1YjRiNjRjZGUyOTBlYTA5NDczNWU0YjkzYWImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.8Edau3Cz0lWwWTfgeyEejvudUYoUGzLE8HZPQ164e7s))
+
 ## 🎯 Perché PromptHub?
 
 Stanco di avere i tuoi prompt sparsi in mille file di testo e cartelle disordinate? PromptHub nasce per risolvere questo problema, offrendo un'unica postazione di lavoro visiva e intuitiva per gestire la tua libreria di prompt in modo efficiente e piacevole.
