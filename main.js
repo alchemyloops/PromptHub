@@ -1,6 +1,6 @@
 // main.js (Versione COMPLETA e AGGIORNATA)
 
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, clipboard, Notification } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -40,14 +40,12 @@ function createWindow() {
             contextIsolation: true,
             nodeIntegration: false,
         },
-        // Mantiene lo stile moderno per macOS
         ...(process.platform === 'darwin' && {
             titleBarStyle: 'hidden',
             trafficLightPosition: { x: 15, y: 15 },
         }),
     });
 
-    // *** MODIFICATO: Rimuove la barra dei menu di default (File, Edit, etc.) ***
     mainWindow.setMenu(null);
 
     const promptsPath = store.get('promptsPath');
@@ -61,8 +59,6 @@ function createWindow() {
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
-
-// --- FUNZIONI DI SUPPORTO PER METADATI ---
 
 function readMetadata(promptsPath) {
     const metadataPath = path.join(promptsPath, '.metadata.json');
@@ -81,6 +77,12 @@ function writeMetadata(promptsPath, data) {
 
 // --- GESTIONE COMUNICAZIONE CON IL FRONTEND (IPC) ---
 
+// *** MODIFICATO: Rimossa la creazione della notifica nativa ***
+ipcMain.on('copy-to-clipboard', (event, text) => {
+    clipboard.writeText(text);
+    // La notifica ora è gestita interamente dal frontend (renderer.js).
+});
+
 ipcMain.on('open-folder-dialog', (event) => {
     dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] })
         .then(result => {
@@ -90,7 +92,6 @@ ipcMain.on('open-folder-dialog', (event) => {
             }
         }).catch(err => console.log(err));
 });
-
 ipcMain.handle('get-prompts-path', () => store.get('promptsPath'));
 ipcMain.handle('read-prompt-items', (event, dirPath) => {
     try {

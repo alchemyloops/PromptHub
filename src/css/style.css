@@ -5,7 +5,7 @@
     --bg-color: #1e1e1e; --primary-text: #dcdcdc; --secondary-text: #8c8c8c;
     --accent-color: #4a90e2; --folder-color: #f7b731; --icon-bg: #2d2d2d;
     --icon-hover-bg: #3a3a3a; --icon-selected-bg: #4a90e2; --nav-bg-color: #252526;
-    --danger-color: #e53e3e; --warning-color: #dd6b20;
+    --danger-color: #e53e3e; --warning-color: #dd6b20; --success-color: #06D6A0;
     --icon-size: 64px; --icon-font-size: 13px; --icon-gap: 20px;
 }
 body { font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: var(--bg-color); color: var(--primary-text); margin: 0; overflow: hidden; display: flex; flex-direction: column; }
@@ -14,28 +14,12 @@ button:hover { background-color: #63a4ff; }
 body.large { --icon-size: 80px; --icon-font-size: 14px; --icon-gap: 25px; }
 body.medium { --icon-size: 64px; --icon-font-size: 13px; --icon-gap: 20px; }
 body.small { --icon-size: 48px; --icon-font-size: 12px; --icon-gap: 15px; }
-
-/* *** MODIFICATO: Stili per il Wizard per un perfetto centraggio *** */
-.wizard-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Occupa tutta l'altezza della finestra */
-    padding: 20px; /* Aggiunge un po' di respiro dai bordi */
-    box-sizing: border-box; /* Assicura che il padding non aumenti la dimensione totale */
-}
-.wizard-container {
-    text-align: center;
-    max-width: 500px;
-    padding: 40px;
-    background-color: var(--icon-bg);
-    border-radius: 12px;
-}
+.wizard-body { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; box-sizing: border-box; }
+.wizard-container { text-align: center; max-width: 500px; padding: 40px; background-color: var(--icon-bg); border-radius: 12px; }
 .wizard-container h1 { font-size: 2em; margin-bottom: 10px; }
 .wizard-container p { color: var(--secondary-text); margin-bottom: 30px; line-height: 1.5; }
 
-
-/* Layout Principale */
+/* Layout e Componenti Principali */
 .app-header { height: 50px; -webkit-app-region: drag; display: flex; align-items: center; padding: 0 15px; user-select: none; flex-shrink: 0; }
 .header-title-group { display: flex; align-items: center; -webkit-app-region: no-drag; padding-left: 0; }
 @media screen and (-apple-system-font: ".SFNS-Regular") { .header-title-group { padding-left: 65px; } }
@@ -51,8 +35,6 @@ body.small { --icon-size: 48px; --icon-font-size: 12px; --icon-gap: 15px; }
 .zoom-controls .nav-btn { margin-right: 0; }
 .global-actions { margin-left: 15px; }
 #desktop { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(var(--icon-size) + 40px), 1fr)); gap: var(--icon-gap); padding: 20px; overflow-y: auto; align-content: start; flex-grow: 1; transition: gap 0.2s; }
-
-/* Icone e Label */
 .prompt-icon { display: flex; flex-direction: column; align-items: center; padding: 10px; border-radius: 8px; cursor: grab; user-select: none; transition: all 0.2s ease-out; position: relative; }
 .prompt-icon:active { cursor: grabbing; }
 .icon-visual { width: var(--icon-size); height: var(--icon-size); background-color: var(--icon-bg); border-radius: 12px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px; box-shadow: 0 4px 10px var(--icon-shadow); transition: all 0.2s ease-out; }
@@ -62,21 +44,16 @@ body.small { --icon-size: 48px; --icon-font-size: 12px; --icon-gap: 15px; }
 .folder-icon-shape::before { content: ''; position: absolute; top: -4px; left: 0; width: calc(var(--icon-size) * 0.25); height: 6px; background-color: inherit; border-radius: 3px 3px 0 0; }
 .icon-label { font-size: var(--icon-font-size); text-align: center; max-width: calc(var(--icon-size) + 20px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 2px 4px; border-radius: 4px; transition: font-size 0.2s; }
 .icon-label[contenteditable="true"] { background-color: rgba(255, 255, 255, 0.1); outline: 1px solid var(--accent-color); cursor: text; white-space: normal; overflow: visible; }
-
-/* Feedback Visivi */
 .prompt-icon:hover .icon-visual { transform: translateY(-5px); box-shadow: 0 10px 20px var(--icon-hover-shadow); background-color: var(--icon-hover-bg); }
 .prompt-icon.selected .icon-visual { background-color: var(--icon-selected-bg); transform: translateY(-5px); box-shadow: 0 10px 20px var(--icon-hover-shadow); }
 .prompt-icon.selected .file-icon-shape { background-color: #fff; }
 .prompt-icon.selected .file-icon-shape::before { border-color: transparent var(--icon-selected-bg) transparent transparent; }
 .prompt-icon.selected .icon-label { font-weight: 500; }
-
-/* Menu Radiale, Modali e Drag&Drop */
 .action-menu-container { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: 999; transition: opacity 0.2s ease-in-out; }
 .action-menu-container.visible { opacity: 1; pointer-events: auto; }
 .action-button { position: absolute; width: 40px; height: 40px; background-color: #3e3e42; color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); margin-left: -20px; margin-top: -20px; transition: background-color 0.2s ease, transform 0.2s ease; }
 .action-button:hover { transform: translateY(-2px); }
 .action-delete:hover { background-color: var(--danger-color); }
-.action-edit:hover { background-color: var(--warning-color); }
 .action-color:hover { background-color: var(--accent-color); }
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease-in-out; z-index: 1000; }
 .modal-overlay.visible { opacity: 1; pointer-events: auto; }
@@ -101,3 +78,25 @@ body.small { --icon-size: 48px; --icon-font-size: 12px; --icon-gap: 15px; }
 .sortable-ghost .icon-visual { display: none; }
 .credits-btn { position: fixed; bottom: 15px; right: 15px; width: 30px; height: 30px; padding: 0; border-radius: 50%; font-size: 1.2em; font-weight: 700; line-height: 1; text-align: center; background-color: #3e3e42; z-index: 100; }
 .credits-btn:hover { background-color: var(--accent-color); }
+
+/* *** NUOVO: Stile per la notifica Toast *** */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--success-color);
+    color: #1e1e1e;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}

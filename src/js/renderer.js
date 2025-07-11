@@ -17,8 +17,9 @@ const editorCloseBtn = document.getElementById('editor-close-btn');
 const zoomInBtn = document.getElementById('zoom-in-btn');
 const zoomOutBtn = document.getElementById('zoom-out-btn');
 const zoomResetBtn = document.getElementById('zoom-reset-btn');
-const creditsBtn = document.getElementById('credits-btn'); // *** NUOVO ***
-const creditsModal = document.getElementById('credits-modal'); // *** NUOVO ***
+const creditsBtn = document.getElementById('credits-btn');
+const creditsModal = document.getElementById('credits-modal');
+const toastNotification = document.getElementById('toast-notification'); // *** NUOVO ***
 
 // --- STATO DELL'APPLICAZIONE ---
 let rootPath = '';
@@ -28,6 +29,7 @@ let editorSaveTimeout = null;
 let currentOpenFile = null;
 let metadataStore = {};
 let sortableInstance = null;
+let toastTimeout = null; // *** NUOVO: per gestire il timer della notifica ***
 const zoomLevels = ['small', 'medium', 'large'];
 let currentZoomIndex = 1;
 
@@ -50,9 +52,17 @@ function createItemIcon(item) {
     iconWrapper.appendChild(iconLabel);
     const itemMeta = metadataStore[item.path];
     if (itemMeta && itemMeta.color) iconShape.style.setProperty('--item-color-override', itemMeta.color);
+
+    // Gestione Eventi Icona
     iconWrapper.addEventListener('click', e => { e.stopPropagation(); handleIconSelection(iconWrapper); });
-    if (item.type === 'directory') iconVisual.addEventListener('dblclick', () => loadItems(item.path));
     iconLabel.addEventListener('dblclick', e => { e.stopPropagation(); makeLabelEditable(iconLabel, item); });
+
+    if (item.type === 'directory') {
+        iconVisual.addEventListener('dblclick', () => loadItems(item.path));
+    } else if (item.type === 'file') {
+        iconVisual.addEventListener('dblclick', () => openEditor(item.path));
+    }
+
     desktop.appendChild(iconWrapper);
 }
 
@@ -64,6 +74,18 @@ function updateNavigationBar() {
         breadcrumbsContainer.innerHTML += `<span class="breadcrumb-part">${part}</span>`;
         if (index < relativePath.length - 1) breadcrumbsContainer.innerHTML += `<span class="breadcrumb-separator">></span>`;
     });
+}
+
+// *** NUOVO: Funzione per mostrare la notifica personalizzata ***
+function showToast(message) {
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+    }
+    toastNotification.textContent = message;
+    toastNotification.classList.add('show');
+    toastTimeout = setTimeout(() => {
+        toastNotification.classList.remove('show');
+    }, 3000); // La notifica scompare dopo 3 secondi
 }
 
 // --- LOGICA DI CREAZIONE, RINOMINA, ELIMINAZIONE ---
@@ -110,16 +132,19 @@ function handleIconSelection(iconElement) {
 
 function showActionMenu(iconElement) {
     const rect = iconElement.getBoundingClientRect();
-    const itemType = iconElement.dataset.type;
-    const actions = [{ name: 'color', icon: '🎨', angle: -20 }, { name: 'delete', icon: '🗑️', angle: 160 }];
-    if (itemType === 'file') actions.unshift({ name: 'edit', icon: '✎', angle: -90 });
+    const defaultRadius = 60;
+    const actions = [
+        { name: 'color', icon: '🎨', angle: -90, radius: defaultRadius }, 
+        { name: 'delete', icon: '🗑️', angle: 180, radius: 55 },
+    ];
+    
     actionMenuContainer.innerHTML = '';
     actions.forEach(action => {
         const button = document.createElement('div');
         button.className = `action-button action-${action.name}`;
         button.textContent = action.icon;
         button.title = action.name;
-        const radius = 60;
+        const radius = action.radius || defaultRadius; 
         const x = Math.cos(action.angle * Math.PI / 180) * radius;
         const y = Math.sin(action.angle * Math.PI / 180) * radius;
         button.style.transform = `translate(${x}px, ${y}px)`;
@@ -148,7 +173,6 @@ async function handleActionClick(actionName) {
             closeActionMenu();
             break;
         case 'color': showColorPicker(); break;
-        case 'edit': openEditor(itemPath); break;
     }
 }
 
@@ -189,7 +213,6 @@ function closeEditor() {
     editorModal.classList.remove('visible'); currentOpenFile = null;
 }
 
-// *** NUOVO: Funzioni per il modale dei credits ***
 function showCredits() { creditsModal.classList.add('visible'); }
 function closeCredits() { creditsModal.classList.remove('visible'); }
 
@@ -198,17 +221,13 @@ function closeCredits() { creditsModal.classList.remove('visible'); }
 function initializeDragAndDrop() {
     if (sortableInstance) sortableInstance.destroy();
     sortableInstance = new Sortable(desktop, {
-        animation: 150,
-        group: 'shared',
-        ghostClass: 'sortable-ghost',
+        animation: 150, group: 'shared', ghostClass: 'sortable-ghost',
         onEnd: async function (evt) {
             const itemEl = evt.item; const toEl = evt.to;
             if (toEl.classList.contains('prompt-icon') && toEl.dataset.type === 'directory') {
-                const itemPath = itemEl.dataset.path;
-                const newParentPath = toEl.dataset.path;
+                const itemPath = itemEl.dataset.path; const newParentPath = toEl.dataset.path;
                 const result = await window.electronAPI.moveItem(itemPath, newParentPath);
-                if (result.success) await loadItems(currentPath, true);
-                else await loadItems(currentPath);
+                if (result.success) await loadItems(currentPath, true); else await loadItems(currentPath);
             }
         },
     });
@@ -216,8 +235,7 @@ function initializeDragAndDrop() {
 
 function applyZoom(levelIndex) {
     const level = zoomLevels[levelIndex];
-    document.body.classList.remove(...zoomLevels);
-    document.body.classList.add(level);
+    document.body.classList.remove(...zoomLevels); document.body.classList.add(level);
     window.electronAPI.setZoomLevel(level);
     currentZoomIndex = levelIndex;
     zoomOutBtn.disabled = (currentZoomIndex === 0);
@@ -250,34 +268,24 @@ async function initialize() {
 
 // --- EVENT LISTENERS GLOBALI ---
 
-backBtn.addEventListener('click', () => {
-    const parentPath = currentPath.split(/[\\/]/).slice(0, -1).join('/');
-    if (parentPath.length >= rootPath.length) loadItems(parentPath);
-});
+backBtn.addEventListener('click', () => { const parentPath = currentPath.split(/[\\/]/).slice(0, -1).join('/'); if (parentPath.length >= rootPath.length) loadItems(parentPath); });
 desktop.addEventListener('click', closeActionMenu);
 newFolderBtn.addEventListener('click', () => createNewItem('directory'));
 newPromptBtn.addEventListener('click', () => createNewItem('file'));
 colorPickerModal.addEventListener('click', e => { if (e.target === colorPickerModal) closeColorPicker(); });
 colorPickerModal.querySelector('.close-modal-btn').addEventListener('click', closeColorPicker);
 editorCloseBtn.addEventListener('click', closeEditor);
-editorCopyBtn.addEventListener('click', () => window.electronAPI.copyToClipboard(editorTextarea.value));
-editorTextarea.addEventListener('input', () => {
-    if (editorSaveTimeout) clearTimeout(editorSaveTimeout);
-    editorSaveTimeout = setTimeout(() => { window.electronAPI.writeFileContent(currentOpenFile, editorTextarea.value); editorSaveTimeout = null; }, 500);
+editorCopyBtn.addEventListener('click', () => {
+    window.electronAPI.copyToClipboard(editorTextarea.value);
+    // *** MODIFICATO: Mostra la notifica personalizzata ***
+    showToast('Testo copiato!');
 });
-editorFilenameInput.addEventListener('keydown', async e => {
-    if (e.key === 'Enter') {
-        const oldPath = currentOpenFile; const newName = e.target.value;
-        const result = await window.electronAPI.renameItem(oldPath, newName);
-        if (result.success) { currentOpenFile = result.newPath; await loadItems(currentPath, true); }
-        e.target.blur();
-    }
-});
+editorTextarea.addEventListener('input', () => { if (editorSaveTimeout) clearTimeout(editorSaveTimeout); editorSaveTimeout = setTimeout(() => { window.electronAPI.writeFileContent(currentOpenFile, editorTextarea.value); editorSaveTimeout = null; }, 500); });
+editorFilenameInput.addEventListener('keydown', async e => { if (e.key === 'Enter') { const oldPath = currentOpenFile; const newName = e.target.value; const result = await window.electronAPI.renameItem(oldPath, newName); if (result.success) { currentOpenFile = result.newPath; await loadItems(currentPath, true); } e.target.blur(); } });
 zoomInBtn.addEventListener('click', () => { if (currentZoomIndex < zoomLevels.length - 1) applyZoom(currentZoomIndex + 1); });
 zoomOutBtn.addEventListener('click', () => { if (currentZoomIndex > 0) applyZoom(currentZoomIndex - 1); });
 zoomResetBtn.addEventListener('click', () => applyZoom(1));
-creditsBtn.addEventListener('click', showCredits); // *** NUOVO ***
-creditsModal.addEventListener('click', e => { if (e.target === creditsModal) closeCredits(); }); // *** NUOVO ***
-creditsModal.querySelector('.close-modal-btn').addEventListener('click', closeCredits); // *** NUOVO ***
-
+creditsBtn.addEventListener('click', showCredits);
+creditsModal.addEventListener('click', e => { if (e.target === creditsModal) closeCredits(); });
+creditsModal.querySelector('.close-modal-btn').addEventListener('click', closeCredits);
 document.addEventListener('DOMContentLoaded', initialize);
