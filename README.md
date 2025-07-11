@@ -2,7 +2,7 @@
 
 Un Desktop Manager per i tuoi Prompt AI. Organizza, modifica e gestisci i tuoi prompt con un'interfaccia drag-and-drop ispirata al desktop.
 
-![Screenshot di PromptHub](./assets/prompthub-screenshot.png)
+![Screenshot di PromptHub](./assets/prompthub - screenshot.png)
 
 ## 🎯 Perché PromptHub?
 
